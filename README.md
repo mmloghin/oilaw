@@ -1,97 +1,74 @@
-# oilaw
-Project to help people to get legal advise/consultation.
+# Oilaw
+This is a student project for Full Stack Developer program at CodeOp. The goal of the project is to create a platform for lawyers and people in need of legal advices. The people should be able to submit their requests/questions so that lawyers can see and reply back. For now the communication itself happens outside (e.g. email chain, phone chain). The main goal for layers to see in the web app is whether the request was assigned/adddressed/completed.
 
-# Full Stack To Do App
+## Database and Setup
 
-In this repository, you will use build a full stack To Do app using React, Node/Express, and MySQL.
+In this repository, you use a full stack app built using React, Node/Express, and MySQL.
+There are three windows you will be working with:
 
-## Objectives
-
-- Build a database.
-- Build an API server.
-- Create a front end.
-
-## Setup
-
-### Dependencies
-
-Run `yarn` in the project folder to install dependencies related to Express (the server).
-
-`cd client` and run `yarn` install dependencies related to React (the client).
-
-### Database Prep
+### 1. Database Prep: 
 
 Create `.env` file in project directory and add
 
 ```
-DB_NAME=todos
+DB_NAME=oilaw
 DB_PASS=YOUR_PASSWORD
 ```
-
 (replace `YOUR_PASSWORD` with your actual password)
-
-Alternatively, you can rename the provided `.env.example` file to `.env`.
 
 Type `mysql -u root -p` to access the MySQL CLI using your password.
 
-In the MySQL CLI, type `create database todos;` to create a database in MySQL.
+In the MySQL CLI, type `create database oilaw;` to create a database in MySQL.
 
-Run the following in the MySQL CLI: `ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'YOUR_PASSWORD';` (replace `YOUR_PASSWORD` with your actual password)
+Run `node model/database.js` in your **TERMINAL**, in the **project** folder (not your MySQL CLI! Open a new terminal window for this). This will create a table called 'users' and 'requests' in your database.
 
-Run `node model/database.js` in your **TERMINAL**, in the **project** folder (not your MySQL CLI! Open a new terminal window for this). This will create a table called 'items' in your database.
+### 2. Backend: 
 
-### Run Your Development Servers
-
-- Run `yarn start` in project directory to start the Express server on port 5000
-- `cd client` and run `yarn start` to start client server in development mode with hot reloading in port 3000.
-- Client is configured so all API calls will be proxied to port 5000 for a smoother development experience. Yay!
-- You can test your client app in `http://localhost:3000`
+- Run `npm install` in the project folder to install dependencies related to Express (the server). Right after run `npm start` which will run Express server on port 5000.
 - You can test your API in `http://localhost:5000/api`
 
-## Basic Requirements
+### 3. Client:
 
-### 1. Read through all the current code and explain it to your partner.
+- `cd client` to navigate to the client folder, then run `npm install` to install React dependencies. `npm start` starts the client server on port 3000.
+- Client is configured so all API calls will be proxied to port 5000 for a smoother development experience. Yay!
+- You can test your client app in `http://localhost:3000`
 
-- [ ] Explain what each line of code is doing.
-  - Look at the docs and ask your instructor if you aren't sure!
+## Features
 
-### 2. Finish the routes
+Please note that the project is still on development phase. Therefore, for now it has only two views: Attorney and Client.
 
-Suggested Process:
+### Client's page
+There is a form that receives information from a person/client that has requests. That requests show up in the attorney's page.
 
-- Try and write the correct query in `mysql`.
-- Use that query to finish the endpoint in `routes/api.js`.
-- Test your endpoint using Postman.
+### Attorney's page
+This page allows the attorneys/lawyers to see all requests coming from clients and be able to click button complete once the request will be addressed by any of the attoerneys.
 
-To Do:
+## Technologies
 
-- [ ] Use Postman to confirm that you have completed these correctly
-- [ ] GET `/api/todos` should retrieve all resources.
-  - This route is almost complete!
-- [ ] POST `/api/todos` should create a new resource.
-  - To test that your query is correct, check to see if your new resource exists using `mysql`.
-  - To test your route, use Postman to see if GET `api/todos` returns your new resources.
-- [ ] PUT `/api/todos/:id` should replace a resource.
-  - To test that your query is correct, check to see if your updated resource exists using `mysql`.
-  - To test your route, use Postman to see if GET `api/todos` includes your updated resources.
-- [ ] DELETE `/api/todos/:id` should delete a resource.
-  - To test that your query is correct, check to see if your resource was deleted using `mysql`.
-  - To test your route, use Postman to see if GET `api/todos` does not include your new resources.
+### Frontend
 
-### 3. Finish the front end
+- React
 
-- [ ] Spend time reviewing the existing code in `client/src/App.js`.
-- [ ] Finish populating `tasks` from the API call in `useEffect`.
-  - Read about `useEffect` [in the React Docs](https://reactjs.org/docs/hooks-effect.html)
-- [ ] Then, add a list of tasks to the DOM. Each task should have the following:
-  - The text of the task.
-  - A strike through (using CSS) if the task is complete.
-  - Two buttons:
-    - One button to mark the task complete (this should call the updateTask function)
-    - One button to delete the task (this should call the deleteTask function)
-- [ ] Finish the updateTask function so it calls the server.
-- [ ] Finish the deleteTask function so it calls the server.
-- [ ] Add styling.
+### Backend
+
+- MySQL Database
+- Node JS
+- Express JS
+- Postman
+
+### Database schema
+
+- There are two tables for now ('users' and 'requests'). These two tables are connected via user_id: so one user can have several requests. The idea is to add 'attorneys' table.
+
+![Oilaw Database Schema] (https://github.com/kanyedzhus/oilaw/blob/main/Untitled-dbdesigner.pdf)
+
+## Feature Extensions
+
+- Creating lawyers database. 
+- Pairing up lawyers and requests. 
+- Automatic reply that form was submitted by client. 
+- Automatic email notifying the lawyers about the question/request submitted.
+- Have different views/pages for resolved and pending requests.
 
 ## Resources
 
