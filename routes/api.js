@@ -1,6 +1,27 @@
 var express = require('express');
 var router = express.Router();
 const db = require("../model/helper");
+const cors = require ("cors");
+
+const app = express();
+
+app.use(express.json());
+app.use(cors());
+
+
+app.post("/register", (req, res) => {
+
+  const username = req.body.username;
+  const password = req.body.password;
+
+
+db.query("INSERT INTO registration (username, password) VALUES (?,?)",
+  [username,password],
+  (err,result) => {
+    console.log(err);
+  }
+  );
+});
 
 router.get("/", (req, res) => {
   res.send("Welcome to the API");

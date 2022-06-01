@@ -1,6 +1,7 @@
 import React, { useState , useEffect} from "react";
 import AdminView from "./components/AdminView";
 import UserView from "./components/UserView";
+import Login from "./components/Login";
 
 
 function App() {
@@ -37,10 +38,11 @@ function App() {
     <div className="container">
       <button className={`btn ${isAdmin ? 'btn-outline-danger' : ''}`} onClick={() => handleChangeView(true)}>ATTORNEY</button>
       <button className={`btn ${!isAdmin ? 'btn-outline-danger' : ''}`} onClick={() => handleChangeView(false)}>CLIENT</button>
-
       {
         isAdmin ? <AdminView requests= {requests} updateRequests={updateRequests} /> : <UserView addRequest={(newRequest) => handleAddRequest(newRequest)} />
-        
+      }
+      {
+        <Login/>
       }
 
     </div>

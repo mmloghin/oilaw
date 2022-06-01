@@ -14,6 +14,7 @@ const con = mysql.createConnection({
   multipleStatements: true
 });
 
+
 con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
@@ -38,6 +39,13 @@ con.connect(function(err) {
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id)
  );
+ DROP TABLE if exists registration; 
+ CREATE TABLE registration (
+   id INT NOT NULL AUTO_INCREMENT, 
+   username TEXT not null,
+   password TEXT not null,
+   PRIMARY KEY (id)
+   );
   
   `;
 
