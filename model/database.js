@@ -39,8 +39,8 @@ con.connect(function(err) {
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id)
  );
- DROP TABLE if exists registration; 
- CREATE TABLE registration (
+ DROP TABLE if exists login; 
+ CREATE TABLE login (
    id INT NOT NULL AUTO_INCREMENT, 
    username TEXT not null,
    password TEXT not null,

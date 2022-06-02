@@ -9,20 +9,6 @@ app.use(express.json());
 app.use(cors());
 
 
-app.post("/register", (req, res) => {
-
-  const username = req.body.username;
-  const password = req.body.password;
-
-
-db.query("INSERT INTO registration (username, password) VALUES (?,?)",
-  [username,password],
-  (err,result) => {
-    console.log(err);
-  }
-  );
-});
-
 router.get("/", (req, res) => {
   res.send("Welcome to the API");
 });
@@ -75,6 +61,41 @@ router.post("/users", (req, res) => {
 
 });
 
+
+router.post("/register", (req, res) => {
+
+  const username = req.body.username;
+  const password = req.body.password;
+  
+  db(`INSERT INTO login (username, password) VALUES ("${req.body.username}", "${req.body.password}")`,
+    [username,password],
+    (err,result) => {
+      console.log(err);
+    }
+    );
+  });
+
+router.post("/login", (req, res) => {
+
+    const username = req.body.username;
+    const password = req.body.password;
+    
+  db(`SELECT * FROM login WHERE (username = "${req.body.username}" AND password = "${req.body.password}")`,
+    [username,password],
+    (err,result) => {
+        if (err) {
+        res.send({err:err});
+        }
+          
+        if (result.length > 0) {
+            res.send(result);
+          } else {
+            res.send({ message: "Username or password is incorrect!" });
+          }
+        }
+      );
+    });
+
 router.put("/users/:user_id/complete", (req, res) => {
   // The request's body is available in req.body
   // If the query is successfull you should send back the full list of items
@@ -122,7 +143,6 @@ router.delete("/users/:user_id", (req, res) => {
     })
     .catch(err => res.status(500).send(err));
 });
-
 
 
 module.exports = router;
