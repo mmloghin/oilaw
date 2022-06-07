@@ -1,12 +1,29 @@
+require('dotenv').config();
 var express = require('express');
 var router = express.Router();
 const db = require("../model/helper");
 const cors = require ("cors");
+const mysql = require("mysql");
+
+const bcrypt = require ('bcrypt')
+const saltRounds = 10
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
+
+
+const jwt = require('jsonwebtoken')
+
+const DB_PASS = process.env.DB_PASS;
+
+const dbConn = mysql.createConnection({
+  user: "root",
+  host:"localhost",
+  password: DB_PASS,
+  database:"oilaw",
+});
 
 
 router.get("/", (req, res) => {
@@ -61,18 +78,48 @@ router.post("/users", (req, res) => {
 
 });
 
+  const verifyJWT = (req, res, next) => {
+  const token = req.headers["x-access-token"]
+
+  if (!token) {
+    res.send("Token missing")
+  } else {
+    jwt.verify(token, "jwtSecret", (err, decoded) => {
+      if (err) {
+        res.json({auth: false, message: "Authentification failed."});
+      } else {
+        req.userId = decoded.id;
+        next();
+      }
+    } )
+  }
+}
+
+router.get("/isUserLoggedIn", verifyJWT, (req, res) => {
+  res.send("User authenticated")
+})
 
 router.post("/register", (req, res) => {
 
   const username = req.body.username;
   const password = req.body.password;
-  
-  db(`INSERT INTO login (username, password) VALUES ("${req.body.username}", "${req.body.password}")`,
-    [username,password],
+
+  bcrypt.hash(password,saltRounds, (err, hash) => {
+
+    if (err) {
+      console.log(err)
+    }
+
+    dbConn.query("INSERT INTO login (username, password) VALUES (?,?)",
+    [username,hash],
     (err,result) => {
+      if (err) {
       console.log(err);
     }
+    res.send(result);
+    }
     );
+  })
   });
 
 router.post("/login", (req, res) => {
@@ -80,17 +127,28 @@ router.post("/login", (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
     
-  db(`SELECT * FROM login WHERE (username = "${req.body.username}" AND password = "${req.body.password}")`,
-    [username,password],
+    dbConn.query("SELECT * FROM login WHERE username = ?;",
+    username,
     (err,result) => {
         if (err) {
         res.send({err:err});
         }
           
         if (result.length > 0) {
-            res.send(result);
+          bcrypt.compare(password, result[0].password, (error, response) => {
+            if(response) {
+              const id = result[0].id
+              const token = jwt.sign({id}, "jwtSecret", {
+                expiresIn: 300,
+              })
+
+            res.json({auth: true, token: token, result: result});
+            } else {
+              res.json({auth: false, message: "Wrong password/user combination."});
+            }
+          })
           } else {
-            res.send({ message: "Username or password is incorrect!" });
+            res.json({auth: false, message: "No user found."});
           }
         }
       );

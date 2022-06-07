@@ -1,37 +1,46 @@
 import React, { useState } from "react";
 import Axios from "axios";
+import "./Login.css";
 
 function Login() {
 
-    const [usernameReg, setUsernameReg] = useState ("")
-    const [passwordReg, setPasswordReg] = useState ("")
+    const [usernameReg, setUsernameReg] = useState ("");
+    const [passwordReg, setPasswordReg] = useState ("");
 
-    const [username, setUsername] = useState ("")
-    const [password, setPassword] = useState ("")
+    const [username, setUsername] = useState ("");
+    const [password, setPassword] = useState ("");
 
-    const [loginStatus, setLoginStatus] = useState ("")
+    const [loginStatus, setLoginStatus] = useState (false);
 
+    
     const register = () => {
         Axios.post("http://localhost:5000/api/register",{username: usernameReg, password: passwordReg}).then ((response) => {
-            console.log(response);
+        setUsernameReg("");
+        setPasswordReg("");
         });
     };
 
     const login = () => {
         Axios.post("http://localhost:5000/api/login",{username: username, password: password}).then ((response) => {
             
-        if (response.data.message) {
-            setLoginStatus(response.data.message)
+        if (!response.data.auth) {
+            setLoginStatus(false);
         } else {
-            setLoginStatus(response.data[0].username)
+            console.log(response.data);
+            setLoginStatus(true);
         }
 
         });
     };
 
+    const logout = () => {
+        setLoginStatus(false);
+    };
+
+
     return (
-        <div classname ="signUp">
-            <div classname= "registration">
+        <div className ="signUp">
+            <div className= "registration">
                 <h1>Registration</h1>
                 <label>Username</label>
                 <input type="text" onChange ={(e) => {setUsernameReg(e.target.value)}}/>
@@ -41,14 +50,20 @@ function Login() {
             </div>
 
 
-            <div classname ="login">
+            <div className ="login">
+            {!loginStatus && (
+                <>
                 <h1>Log In</h1>
                 <input type= "text" placeholder="Username" onChange ={(e) => {setUsername(e.target.value)}}/>
                 <input type= "password" placeholder="Password" onChange ={(e) => {setPassword(e.target.value)}}/>
                 <button onClick={login}> Login </button>
+                </>
+                )}
             </div>
-
-            <h1>{loginStatus}</h1>
+        <div className= "signedIn">
+            {loginStatus && <h1>You are logged in!</h1>}
+            {loginStatus && <button onClick={logout}>Log out</button>}
+        </div>
         </div>
     );
 }
